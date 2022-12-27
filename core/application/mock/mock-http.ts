@@ -1,4 +1,9 @@
-import { HttpClient, HttpRequest, HttpResponse, HttpStatusCode } from "../protocols/http-client"
+import {
+  HttpClient,
+  HttpRequest,
+  HttpResponse,
+  HttpStatusCode
+} from "@/application/protocols/http-client"
 
 export class HttpClientSpy<T = any> implements HttpClient<T> {
   url?: string

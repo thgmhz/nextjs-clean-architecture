@@ -1,6 +1,6 @@
 import { RemoteAuthentication } from './remote-authentication'
-import { HttpClientSpy } from '@/data/mock/mock-http'
-import { HttpStatusCode } from '@/data/protocols/http-client'
+import { HttpClientSpy } from '@/application/mock/mock-http'
+import { HttpStatusCode } from '@/application/protocols/http-client'
 import { InvalidCredentialsError } from '@/domain/errors/invalid-credentials-error'
 import { UnexpectedError } from '@/domain/errors/unexpected-error'
 
