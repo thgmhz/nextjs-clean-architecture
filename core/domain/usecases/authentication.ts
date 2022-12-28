@@ -1,14 +1,12 @@
-import { AccountModel } from "@/domain/entities/account"
+import { AccountModel } from '@/domain/entities/account'
 
-export namespace Authentication {
-  export type Params = {
-    username: string
-    password: string
-  }
-
-  export type Model = AccountModel
+export type AuthenticationParams = {
+  username: string
+  password: string
 }
 
+export type AuthenticationModel = AccountModel
+
 export interface Authentication {
-  auth: (params: Authentication.Params) => Promise<Authentication.Model>
+  auth: (params: AuthenticationParams) => Promise<AuthenticationModel>
 }

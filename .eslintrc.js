@@ -32,6 +32,8 @@ module.exports = {
         endOfLine: 'auto',
       },
     ],
+    '@typescript-eslint/no-unused-vars': 'error',
+    'no-unused-vars': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
     'jsx-a11y/alt-text': [
