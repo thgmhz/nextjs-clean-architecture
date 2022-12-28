@@ -4,23 +4,23 @@ import { HttpClient, HttpStatusCode } from '@/application/protocols/http-client'
 import { InvalidCredentialsError } from '@/domain/errors/invalid-credentials-error'
 import { UnexpectedError } from '@/domain/errors/unexpected-error'
 
-type Params = {
+export type AuthenticationParams = {
   username: string
   password: string
 }
 
-type Model = AuthenticationModel
-
-export class AuthenticationUseCase implements UseCase<Params, Model> {
+export class AuthenticationUseCase
+  implements UseCase<AuthenticationParams, AuthenticationModel>
+{
   private readonly url
   private readonly httpClient
 
-  constructor(url: string, httpClient: HttpClient<Model>) {
+  constructor(url: string, httpClient: HttpClient<AuthenticationModel>) {
     this.url = url
     this.httpClient = httpClient
   }
 
-  async execute(params: Params): Promise<Model> {
+  async execute(params: AuthenticationParams): Promise<AuthenticationModel> {
     const { username, password } = params
 
     const httpResponse = await this.httpClient.request({

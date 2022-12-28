@@ -1,3 +1,4 @@
+import { mockAuthenticationParams } from '@/domain/mocks/mock-authentication'
 import { HttpClientSpy } from '@/application/mock/mock-http'
 import { HttpStatusCode } from '@/application/protocols/http-client'
 import { AuthenticationModel } from '@/domain/entities/authentication'
@@ -12,17 +13,16 @@ const makeSut = (url: string = 'http://fake-url.com') => {
   return { httpClientSpy, sut }
 }
 
-const fakeAuthParams = { username: 'test', password: 'test123' }
-
 describe('Domain - Usecase - Authentication', () => {
   test('should call HttpClient with correct values', async () => {
     const url = 'http://www.nasa.org'
     const { sut, httpClientSpy } = makeSut(url)
-    await sut.execute(fakeAuthParams)
+    const params = mockAuthenticationParams()
+    await sut.execute(params)
 
     expect(httpClientSpy.url).toBe(url)
     expect(httpClientSpy.method).toBe('post')
-    expect(httpClientSpy.body).toEqual(fakeAuthParams)
+    expect(httpClientSpy.body).toEqual(params)
   })
 
   test('should throw InvalidCredentialError if HttpClient returns 401', async () => {
@@ -31,7 +31,7 @@ describe('Domain - Usecase - Authentication', () => {
       statusCode: HttpStatusCode.unauthorized,
       body: {},
     }
-    const promise = sut.execute(fakeAuthParams)
+    const promise = sut.execute(mockAuthenticationParams())
     await expect(promise).rejects.toThrow(new InvalidCredentialsError())
   })
 
@@ -41,7 +41,7 @@ describe('Domain - Usecase - Authentication', () => {
       statusCode: HttpStatusCode.badRequest,
       body: {},
     }
-    const promise = sut.execute(fakeAuthParams)
+    const promise = sut.execute(mockAuthenticationParams())
     await expect(promise).rejects.toThrow(new UnexpectedError())
   })
 
@@ -51,7 +51,7 @@ describe('Domain - Usecase - Authentication', () => {
       statusCode: HttpStatusCode.serverError,
       body: {},
     }
-    const promise = sut.execute(fakeAuthParams)
+    const promise = sut.execute(mockAuthenticationParams())
     await expect(promise).rejects.toThrow(new UnexpectedError())
   })
 
@@ -61,7 +61,7 @@ describe('Domain - Usecase - Authentication', () => {
       statusCode: HttpStatusCode.notFound,
       body: {},
     }
-    const promise = sut.execute(fakeAuthParams)
+    const promise = sut.execute(mockAuthenticationParams())
     await expect(promise).rejects.toThrow(new UnexpectedError())
   })
 
@@ -72,7 +72,7 @@ describe('Domain - Usecase - Authentication', () => {
       statusCode: HttpStatusCode.ok,
       body: httpResponse,
     }
-    const account = await sut.execute(fakeAuthParams)
+    const account = await sut.execute(mockAuthenticationParams())
     expect(account).toEqual(httpResponse)
   })
 })
