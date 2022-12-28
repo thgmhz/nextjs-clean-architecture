@@ -1,13 +1,18 @@
 import { faker } from '@faker-js/faker'
-import { AccountModel } from '@/domain/entities/account'
+import { AccountParams } from '@/domain/entities/account/account'
+import { mockUserParams } from './mock-user'
 
-export const mockAccountModel = (): AccountModel => ({
-  id: faker.datatype.uuid(),
-  token: faker.datatype.uuid(),
-  firstName: faker.name.firstName(),
-  lastName: faker.name.lastName(),
-  gender: faker.name.gender(),
-  image: faker.image.people(),
+const mockedUserParams = mockUserParams({})
+
+export const mockAccountParams = ({
+  password,
+  confirmPassword,
+}: {
+  password: string
+  confirmPassword: string
+}): AccountParams => ({
+  ...mockedUserParams,
   username: faker.internet.userName(),
-  password: faker.internet.password(),
+  password,
+  confirmPassword,
 })
