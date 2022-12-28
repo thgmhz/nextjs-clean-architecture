@@ -1,3 +1,3 @@
-export const makeApiUrl = (path: string): string => {
-  return `${process.env.API_URL}${path}`
+export const ApiUrlFactory = (path: string): string => {
+  return `https://dummyjson.com/${path}`
 }
