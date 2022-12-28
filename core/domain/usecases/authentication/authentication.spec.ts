@@ -1,24 +1,24 @@
-import { RemoteAuthentication } from './remote-authentication'
 import { HttpClientSpy } from '@/application/mock/mock-http'
 import { HttpStatusCode } from '@/application/protocols/http-client'
+import { AuthenticationModel } from '@/domain/entities/authentication'
 import { InvalidCredentialsError } from '@/domain/errors/invalid-credentials-error'
 import { UnexpectedError } from '@/domain/errors/unexpected-error'
-import { AuthenticationModel } from '@/domain/usecases/authentication'
+import { AuthenticationUseCase } from './authentication'
 
 const makeSut = (url: string = 'http://fake-url.com') => {
   const httpClientSpy = new HttpClientSpy<AuthenticationModel>()
-  const sut = new RemoteAuthentication(url, httpClientSpy)
+  const sut = new AuthenticationUseCase(url, httpClientSpy)
 
   return { httpClientSpy, sut }
 }
 
 const fakeAuthParams = { username: 'test', password: 'test123' }
 
-describe('Data - Usecase - RemoteAuthentication', () => {
+describe('Domain - Usecase - Authentication', () => {
   test('should call HttpClient with correct values', async () => {
     const url = 'http://www.nasa.org'
     const { sut, httpClientSpy } = makeSut(url)
-    await sut.auth(fakeAuthParams)
+    await sut.execute(fakeAuthParams)
 
     expect(httpClientSpy.url).toBe(url)
     expect(httpClientSpy.method).toBe('post')
@@ -31,7 +31,7 @@ describe('Data - Usecase - RemoteAuthentication', () => {
       statusCode: HttpStatusCode.unauthorized,
       body: {},
     }
-    const promise = sut.auth(fakeAuthParams)
+    const promise = sut.execute(fakeAuthParams)
     await expect(promise).rejects.toThrow(new InvalidCredentialsError())
   })
 
@@ -41,7 +41,7 @@ describe('Data - Usecase - RemoteAuthentication', () => {
       statusCode: HttpStatusCode.badRequest,
       body: {},
     }
-    const promise = sut.auth(fakeAuthParams)
+    const promise = sut.execute(fakeAuthParams)
     await expect(promise).rejects.toThrow(new UnexpectedError())
   })
 
@@ -51,7 +51,7 @@ describe('Data - Usecase - RemoteAuthentication', () => {
       statusCode: HttpStatusCode.serverError,
       body: {},
     }
-    const promise = sut.auth(fakeAuthParams)
+    const promise = sut.execute(fakeAuthParams)
     await expect(promise).rejects.toThrow(new UnexpectedError())
   })
 
@@ -61,7 +61,7 @@ describe('Data - Usecase - RemoteAuthentication', () => {
       statusCode: HttpStatusCode.notFound,
       body: {},
     }
-    const promise = sut.auth(fakeAuthParams)
+    const promise = sut.execute(fakeAuthParams)
     await expect(promise).rejects.toThrow(new UnexpectedError())
   })
 
@@ -72,7 +72,7 @@ describe('Data - Usecase - RemoteAuthentication', () => {
       statusCode: HttpStatusCode.ok,
       body: httpResponse,
     }
-    const account = await sut.auth(fakeAuthParams)
+    const account = await sut.execute(fakeAuthParams)
     expect(account).toEqual(httpResponse)
   })
 })

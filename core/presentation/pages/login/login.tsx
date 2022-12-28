@@ -1,8 +1,8 @@
+import { RemoteAuthenticationUseCase } from '@/application/usecases/authentication/remote-authentication'
 import React, { useState } from 'react'
-import { Authentication } from '@/domain/usecases/authentication'
 
 type Props = {
-  authentication: Authentication
+  authentication: RemoteAuthenticationUseCase
 }
 
 export const LoginPresentation: React.FC<Props> = ({ authentication }) => {
@@ -11,7 +11,7 @@ export const LoginPresentation: React.FC<Props> = ({ authentication }) => {
 
   const makeRequest = async () => {
     try {
-      const response = await authentication.auth({
+      const response = await authentication.execute({
         username: 'kminchelle',
         password: '0lelplR',
       })
