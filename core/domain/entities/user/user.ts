@@ -1,6 +1,6 @@
 import { InvalidNameError } from '@/domain/errors/invalid-name-error'
 import { InvalidImageError } from '@/domain/errors/invalid-image-error'
-import { Entity } from '../entity'
+import { left, right, Either } from '@/shared/either'
 
 export type UserModel = {
   firstName: string
@@ -9,39 +9,44 @@ export type UserModel = {
   image: string
 }
 
-export class User implements Entity<UserModel> {
-  public readonly user: UserModel
+type EitherProps = Either<InvalidNameError | InvalidImageError, UserModel>
+export class User {
+  public static create(params: UserModel): EitherProps {
+    if (!User.validateName(params.firstName, params.lastName)) {
+      return left(new InvalidNameError())
+    }
 
-  constructor(user: UserModel) {
-    this.user = user
+    if (!User.validateImage(params.image)) {
+      return left(new InvalidImageError())
+    }
+
+    return right({
+      ...params,
+    })
   }
 
-  public create(): User {
-    this.validateName(this.user.firstName, this.user.lastName)
-
-    this.validateImage(this.user.image)
-
-    return new User(this.user)
-  }
-
-  private validateName(firstName: string, lastName: string): void {
+  private static validateName(firstName: string, lastName: string): boolean {
     if (!firstName || !lastName) {
-      throw new InvalidNameError()
+      return false
     }
 
     if (firstName.trim().length < 3 || firstName.trim().length > 50) {
-      throw new InvalidNameError()
+      return false
     }
 
     if (lastName.trim().length < 3 || lastName.trim().length > 50) {
-      throw new InvalidNameError()
+      return false
     }
+
+    return true
   }
 
-  private validateImage(image: string): void {
+  private static validateImage(image: string): boolean {
     const regex = /\.(png|jpg)$/i
     if (!regex.test(image)) {
-      throw new InvalidImageError()
+      return false
     }
+
+    return true
   }
 }
