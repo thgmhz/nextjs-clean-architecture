@@ -12,6 +12,10 @@ class Left<L, A> {
   isRight(): this is Right<L, A> {
     return false
   }
+
+  getValue() {
+    return this.value
+  }
 }
 
 class Right<L, A> {
@@ -27,6 +31,10 @@ class Right<L, A> {
 
   isRight(): this is Right<L, A> {
     return true
+  }
+
+  getValue() {
+    return this.value
   }
 }
 
