@@ -1,6 +1,7 @@
 import { InvalidNameError } from '@/domain/errors/invalid-name-error'
 import { InvalidImageError } from '@/domain/errors/invalid-image-error'
 import { left, right, Either } from '@/shared/either'
+import { Entity } from '@/domain/contracts/entity'
 
 export type UserModel = {
   firstName: string
@@ -10,18 +11,20 @@ export type UserModel = {
 }
 
 type EitherProps = Either<InvalidNameError | InvalidImageError, UserModel>
-export class User {
-  public static create(params: UserModel): EitherProps {
-    if (!User.validateName(params.firstName, params.lastName)) {
+export class User implements Entity {
+  constructor(private readonly params: UserModel) { }
+
+  public create(): EitherProps {
+    if (!User.validateName(this.params.firstName, this.params.lastName)) {
       return left(new InvalidNameError())
     }
 
-    if (!User.validateImage(params.image)) {
+    if (!User.validateImage(this.params.image)) {
       return left(new InvalidImageError())
     }
 
     return right({
-      ...params,
+      ...this.params,
     })
   }
 

@@ -13,12 +13,12 @@ type EitherProps = Either<Error, AccountCreatedModel>
 
 export class Account implements Entity {
   public create(params: AccountModel): EitherProps {
-    const user = User.create({
+    const user = new User({
       firstName: params.firstName,
       lastName: params.lastName,
       gender: params.gender,
       image: params.image,
-    })
+    }).create()
 
     if (user.isLeft()) {
       return left(user.value)
