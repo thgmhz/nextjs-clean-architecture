@@ -3,7 +3,7 @@ import {
   HttpRequest,
   HttpResponse,
   HttpStatusCode,
-} from '@/application/protocols/http-client'
+} from '@/application/contracts/http-client'
 
 export const mockHttpRequest = (): HttpRequest => ({
   url: 'http://www.mock.com/',
