@@ -12,12 +12,14 @@ export type AccountCreatedModel = Omit<AccountModel, 'passwordConfirmation'>
 type EitherProps = Either<Error, AccountCreatedModel>
 
 export class Account implements Entity {
-  public create(params: AccountModel): EitherProps {
+  constructor(private readonly params: AccountModel) {}
+
+  public create(): EitherProps {
     const user = new User({
-      firstName: params.firstName,
-      lastName: params.lastName,
-      gender: params.gender,
-      image: params.image,
+      firstName: this.params.firstName,
+      lastName: this.params.lastName,
+      gender: this.params.gender,
+      image: this.params.image,
     }).create()
 
     if (user.isLeft()) {
@@ -25,9 +27,9 @@ export class Account implements Entity {
     }
 
     const credential = new Credentials().create({
-      username: params.username,
-      password: params.password,
-      passwordConfirmation: params.passwordConfirmation,
+      username: this.params.username,
+      password: this.params.password,
+      passwordConfirmation: this.params.passwordConfirmation,
     })
 
     if (credential.isLeft()) {

@@ -12,7 +12,7 @@ export type UserModel = {
 
 type EitherProps = Either<InvalidNameError | InvalidImageError, UserModel>
 export class User implements Entity {
-  constructor(private readonly params: UserModel) { }
+  constructor(private readonly params: UserModel) {}
 
   public create(): EitherProps {
     if (!User.validateName(this.params.firstName, this.params.lastName)) {

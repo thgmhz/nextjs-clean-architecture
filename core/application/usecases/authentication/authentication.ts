@@ -4,13 +4,10 @@ import { HttpClient } from '@/application/contracts/http-client'
 import { UserModel } from '@/domain/entities/user/user'
 
 export class AuthenticationUseCase implements UseCase {
-  private readonly url
-  private readonly httpClient
-
-  constructor(url: string, httpClient: HttpClient<UserModel>) {
-    this.url = url
-    this.httpClient = httpClient
-  }
+  constructor(
+    private readonly url: string,
+    private readonly httpClient: HttpClient<UserModel>,
+  ) {}
 
   async execute(params: CredentialsModel): Promise<UserModel> {
     const { username, password } = params

@@ -3,21 +3,21 @@ import { Account, AccountCreatedModel } from './account'
 
 describe('Entity - Account', () => {
   test('should not create account if User entity returns some error', () => {
-    const error = new Account().create(
+    const error = new Account(
       mockAccountParams({
         firstName: 'a',
       }),
-    ).value as Error
+    ).create().value as Error
 
     expect(error.name).toBe('InvalidNameError')
   })
 
   test('should not create account if Credential entity returns some error', () => {
-    const error = new Account().create(
+    const error = new Account(
       mockAccountParams({
         password: '123',
       }),
-    ).value as Error
+    ).create().value as Error
 
     expect(error.name).toBe('InvalidPasswordError')
   })
@@ -25,7 +25,7 @@ describe('Entity - Account', () => {
   test('should create account and return the account data without password confirmation param', () => {
     const params = mockAccountParams({})
 
-    const account = new Account().create(params).value as AccountCreatedModel
+    const account = new Account(params).create().value as AccountCreatedModel
 
     const newParams = Object.assign({}, params, {
       passwordConfirmation: undefined,

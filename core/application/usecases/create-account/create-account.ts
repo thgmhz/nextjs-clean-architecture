@@ -3,16 +3,13 @@ import { HttpClient, HttpResponse } from '@/application/contracts/http-client'
 import { UseCase } from '@/application/contracts/usecase'
 
 export class CreateAccountUseCase implements UseCase {
-  private readonly url
-  private readonly httpClient
-
-  constructor(url: string, httpClient: HttpClient<AccountModel>) {
-    this.url = url
-    this.httpClient = httpClient
-  }
+  constructor(
+    private readonly url: string,
+    private readonly httpClient: HttpClient<AccountModel>,
+  ) {}
 
   async execute(params: AccountModel): Promise<HttpResponse> {
-    const account = new Account().create(params)
+    const account = new Account(params).create()
 
     if (account.isLeft()) {
       return Promise.reject(account.value)
