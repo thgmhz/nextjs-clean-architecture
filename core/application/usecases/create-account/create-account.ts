@@ -1,40 +1,29 @@
-import {
-  Account,
-  AccountParams,
-  AccountModel,
-} from '@/domain/entities/account/account'
-import { HttpClient, HttpStatusCode } from '@/application/protocols/http-client'
-import { UseCase } from '@/application/usecases/usecase'
-import { UnexpectedError } from '@/domain/errors/unexpected-error'
-import { UserAlreadyExistsError } from '@/domain/errors/user-already-exists'
+import { Account, AccountModel } from '@/domain/entities/account/account'
+import { HttpClient, HttpResponse } from '@/application/contracts/http-client'
+import { UseCase } from '@/application/contracts/usecase'
 
-export class CreateAccountUseCase
-  implements UseCase<AccountParams, AccountModel>
-{
+export class CreateAccountUseCase implements UseCase {
   private readonly url
   private readonly httpClient
 
-  constructor(url: string, httpClient: HttpClient<AccountParams>) {
+  constructor(url: string, httpClient: HttpClient<AccountModel>) {
     this.url = url
     this.httpClient = httpClient
   }
 
-  async execute(params: AccountParams): Promise<AccountModel> {
-    const account = new Account(params).create()
+  async execute(params: AccountModel): Promise<HttpResponse> {
+    const account = new Account().create(params)
+
+    if (account.isLeft()) {
+      return Promise.reject(account.value)
+    }
 
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'post',
-      body: account,
+      body: account.getValue(),
     })
 
-    switch (httpResponse.statusCode) {
-      case HttpStatusCode.ok:
-        return httpResponse.body
-      case HttpStatusCode.forbidden:
-        throw new UserAlreadyExistsError()
-      default:
-        throw new UnexpectedError()
-    }
+    return httpResponse
   }
 }

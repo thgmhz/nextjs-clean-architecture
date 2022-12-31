@@ -1,51 +1,42 @@
-import { Entity } from '@/domain/entities/entity'
+import { Entity } from '@/domain/contracts/entity'
 import { UserModel, User } from '@/domain/entities/user/user'
-import { InvalidPasswordError } from '@/domain/errors/invalid-password-error'
-import { InvalidConfirmPasswordError } from '@/domain/errors/invalid-confirm-password-error'
+import { Either, left, right } from '@/shared/either'
+import {
+  Credentials,
+  CredentialsConfirmModel,
+} from '../credentials/credentials'
 
-export interface AccountModel extends UserModel {
-  username: string
-  password: string
-}
+export type AccountModel = UserModel & CredentialsConfirmModel
+export type AccountCreatedModel = Omit<AccountModel, 'passwordConfirmation'>
 
-type ConfirmPassword = {
-  confirmPassword: string
-}
+type EitherProps = Either<Error, AccountCreatedModel>
 
-export type AccountParams = AccountModel & ConfirmPassword
+export class Account implements Entity {
+  public create(params: AccountModel): EitherProps {
+    const user = User.create({
+      firstName: params.firstName,
+      lastName: params.lastName,
+      gender: params.gender,
+      image: params.image,
+    })
 
-export class Account implements Entity<AccountModel> {
-  public readonly account: AccountParams
-
-  constructor(account: AccountParams) {
-    this.account = account
-  }
-
-  public create(): Account {
-    this.validatePassword(this.account.password, this.account.confirmPassword)
-
-    const userData = new User(this.account).create()
-
-    return new Account({ ...this.account, ...userData.user })
-  }
-
-  public validatePassword(password: string, confirmPassword: string): void {
-    /*
-      should contain at least one digit
-      should contain at least one lower case
-      should contain at least one upper case
-      should contain at least 8 from the mentioned characters
-    */
-    const regex =
-      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,10}$/
-    const isValidPassword = regex.test(password)
-
-    if (!isValidPassword) {
-      throw new InvalidPasswordError()
+    if (user.isLeft()) {
+      return left(user.value)
     }
 
-    if (confirmPassword !== password) {
-      throw new InvalidConfirmPasswordError()
+    const credential = new Credentials().create({
+      username: params.username,
+      password: params.password,
+      passwordConfirmation: params.passwordConfirmation,
+    })
+
+    if (credential.isLeft()) {
+      return left(credential.value)
     }
+
+    return right({
+      ...credential.value,
+      ...user.value,
+    })
   }
 }

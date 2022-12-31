@@ -1,106 +1,67 @@
+import { InvalidPasswordError } from '@/domain/errors/invalid-password-error'
 import { HttpClientSpy } from '@/application/mock/mock-http'
-import { HttpStatusCode } from '@/application/protocols/http-client'
-import { UnexpectedError } from '@/domain/errors/unexpected-error'
-import { UserAlreadyExistsError } from '@/domain/errors/user-already-exists'
-import { AccountParams } from '@/domain/entities/account/account'
+import { AccountModel } from '@/domain/entities/account/account'
 import { CreateAccountUseCase } from './create-account'
-import { mockAccountParams } from '@/domain/mocks/mock-account'
+import {
+  mockAccountParams,
+  removePasswordConfirmation,
+} from '@/domain/mocks/mock-account'
+import { InvalidNameError } from '@/domain/errors/invalid-name-error'
 
 const makeSut = (url: string = 'http://fake-url.com') => {
-  const httpClientSpy = new HttpClientSpy<AccountParams>()
+  const httpClientSpy = new HttpClientSpy<AccountModel>()
   const sut = new CreateAccountUseCase(url, httpClientSpy)
 
   return { httpClientSpy, sut }
 }
 
-describe('Domain - Usecase - Add Account', () => {
-  test('should call HttpClient with correct values', async () => {
+describe('Domain - Usecase - Create Account', () => {
+  test('should call HttpClient with correct values and create account', async () => {
     const url = 'http://www.nasa.org.br'
     const { sut, httpClientSpy } = makeSut(url)
-    const params = mockAccountParams({
-      password: 'mM9@ppyy',
-      confirmPassword: 'mM9@ppyy',
-    })
+    const params = mockAccountParams({})
     await sut.execute(params)
+    const newParams = removePasswordConfirmation(params)
 
     expect(httpClientSpy.url).toBe(url)
     expect(httpClientSpy.method).toBe('post')
-    expect(httpClientSpy.body.account).toEqual(params)
+    expect(httpClientSpy.body).toEqual(newParams)
   })
 
-  test('should throw UserAlreadyExists if HttpClient returns 403', async () => {
-    const { sut, httpClientSpy } = makeSut()
-    httpClientSpy.response = {
-      statusCode: HttpStatusCode.forbidden,
-      body: {},
-    }
-    const promise = sut.execute(
-      mockAccountParams({
-        password: 'mM9@ppyy',
-        confirmPassword: 'mM9@ppyy',
-      }),
-    )
-    await expect(promise).rejects.toThrow(new UserAlreadyExistsError())
+  test('should not create account with invalid user data', async () => {
+    const url = 'http://www.nasa.org.br'
+    const { sut } = makeSut(url)
+    const params = mockAccountParams({
+      firstName: 'a',
+      lastName: 'a',
+      image: 'img.gif',
+    })
+    const promise = sut.execute(params)
+
+    await expect(promise).rejects.toThrow(new InvalidNameError())
   })
 
-  test('should throw UnexpectedError if HttpClient returns 400', async () => {
-    const { sut, httpClientSpy } = makeSut()
-    httpClientSpy.response = {
-      statusCode: HttpStatusCode.badRequest,
-      body: {},
-    }
-    const promise = sut.execute(
-      mockAccountParams({
-        password: 'mM9@ppyy',
-        confirmPassword: 'mM9@ppyy',
-      }),
-    )
-    await expect(promise).rejects.toThrow(new UnexpectedError())
+  test('should not create account with invalid password', async () => {
+    const url = 'http://www.nasa.org.br'
+    const { sut } = makeSut(url)
+    const params = mockAccountParams({
+      password: '123456',
+      passwordConfirmation: '123456',
+    })
+    const promise = sut.execute(params)
+
+    await expect(promise).rejects.toThrow(new InvalidPasswordError())
   })
 
-  test('should throw UnexpectedError if HttpClient returns 500', async () => {
-    const { sut, httpClientSpy } = makeSut()
-    httpClientSpy.response = {
-      statusCode: HttpStatusCode.serverError,
-      body: {},
-    }
-    const promise = sut.execute(
-      mockAccountParams({
-        password: 'mM9@ppyy',
-        confirmPassword: 'mM9@ppyy',
-      }),
-    )
-    await expect(promise).rejects.toThrow(new UnexpectedError())
-  })
+  test('should not create account with invalid password confirmation', async () => {
+    const url = 'http://www.nasa.org.br'
+    const { sut } = makeSut(url)
+    const params = mockAccountParams({
+      password: '123456',
+      passwordConfirmation: '12345678',
+    })
+    const promise = sut.execute(params)
 
-  test('should throw UnexpectedError if HttpClient returns 404', async () => {
-    const { sut, httpClientSpy } = makeSut()
-    httpClientSpy.response = {
-      statusCode: HttpStatusCode.notFound,
-      body: {},
-    }
-    const promise = sut.execute(
-      mockAccountParams({
-        password: 'mM9@ppyy',
-        confirmPassword: 'mM9@ppyy',
-      }),
-    )
-    await expect(promise).rejects.toThrow(new UnexpectedError())
-  })
-
-  test('should return an AddAccountModel if HttpClient returns 200', async () => {
-    const { sut, httpClientSpy } = makeSut()
-    const httpResponse = { accessToken: '123', name: 'Thiago' }
-    httpClientSpy.response = {
-      statusCode: HttpStatusCode.ok,
-      body: httpResponse,
-    }
-    const account = await sut.execute(
-      mockAccountParams({
-        password: 'mM9@ppyy',
-        confirmPassword: 'mM9@ppyy',
-      }),
-    )
-    expect(account).toEqual(httpResponse)
+    await expect(promise).rejects.toThrow(new InvalidPasswordError())
   })
 })

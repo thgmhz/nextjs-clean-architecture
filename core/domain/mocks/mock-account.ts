@@ -1,18 +1,34 @@
-import { faker } from '@faker-js/faker'
-import { AccountParams } from '@/domain/entities/account/account'
 import { mockUserParams } from './mock-user'
+import { mockCredentialsParams, MockCredentialsProps } from './mock-credential'
+import { AccountModel } from '../entities/account/account'
 
-const mockedUserParams = mockUserParams({})
+type MockAccountParams = {
+  firstName?: string
+  lastName?: string
+  image?: string
+}
+
+type Props = MockAccountParams & MockCredentialsProps
 
 export const mockAccountParams = ({
+  firstName,
+  lastName,
+  image,
   password,
-  confirmPassword,
-}: {
-  password: string
-  confirmPassword: string
-}): AccountParams => ({
-  ...mockedUserParams,
-  username: faker.internet.userName(),
-  password,
-  confirmPassword,
+  passwordConfirmation,
+}: Props): AccountModel => ({
+  ...mockUserParams({
+    firstName,
+    lastName,
+    image,
+  }),
+  ...mockCredentialsParams({
+    password,
+    passwordConfirmation,
+  }),
 })
+
+export const removePasswordConfirmation = (params: Props) =>
+  Object.assign(params, {
+    passwordConfirmation: undefined,
+  })

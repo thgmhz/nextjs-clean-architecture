@@ -1,83 +1,36 @@
-import { InvalidConfirmPasswordError } from '@/domain/errors/invalid-confirm-password-error'
-import { InvalidPasswordError } from '@/domain/errors/invalid-password-error'
 import { mockAccountParams } from '@/domain/mocks/mock-account'
-import { Account } from './account'
+import { Account, AccountCreatedModel } from './account'
 
 describe('Entity - Account', () => {
-  test('should not create account when password is less than 8 characters', () => {
-    const account = new Account(
+  test('should not create account if User entity returns some error', () => {
+    const error = new Account().create(
       mockAccountParams({
-        password: 'mM9@pp',
-        confirmPassword: 'mM9@pp',
+        firstName: 'a',
       }),
-    )
-    const error = () => account.create()
-    expect(error).toThrow(new InvalidPasswordError())
+    ).value as Error
+
+    expect(error.name).toBe('InvalidNameError')
   })
 
-  test('should not create account when password is 8 characters but no uppercase letter', () => {
-    const account = new Account(
+  test('should not create account if Credential entity returns some error', () => {
+    const error = new Account().create(
       mockAccountParams({
-        password: 'mm9@ppyy',
-        confirmPassword: 'mm9@ppyy',
+        password: '123',
       }),
-    )
-    const error = () => account.create()
-    expect(error).toThrow(new InvalidPasswordError())
+    ).value as Error
+
+    expect(error.name).toBe('InvalidPasswordError')
   })
 
-  test('should not create account when password is 8 characters but no lowercase letter', () => {
-    const account = new Account(
-      mockAccountParams({
-        password: 'MM9@PPYY',
-        confirmPassword: 'MM9@PPYY',
-      }),
-    )
-    const error = () => account.create()
-    expect(error).toThrow(new InvalidPasswordError())
-  })
+  test('should create account and return the account data without password confirmation param', () => {
+    const params = mockAccountParams({})
 
-  test('should not create account when password is 8 characters but no special character', () => {
-    const account = new Account(
-      mockAccountParams({
-        password: 'mM98ppyy',
-        confirmPassword: 'mM98ppyy',
-      }),
-    )
-    const error = () => account.create()
-    expect(error).toThrow(new InvalidPasswordError())
-  })
+    const account = new Account().create(params).value as AccountCreatedModel
 
-  test('should not create account when password is 8 characters but no numeric digit', () => {
-    const account = new Account(
-      mockAccountParams({
-        password: 'mM!!ppyy',
-        confirmPassword: 'mM!!ppyy',
-      }),
-    )
-    const error = () => account.create()
-    expect(error).toThrow(new InvalidPasswordError())
-  })
-
-  test('should not create account when confirmPassword is not equal to password ', () => {
-    const account = new Account(
-      mockAccountParams({
-        password: 'mM9@ppyy',
-        confirmPassword: 'mM9@ppy',
-      }),
-    )
-    const error = () => account.create()
-    expect(error).toThrow(new InvalidConfirmPasswordError())
-  })
-
-  test('should create account when password and confirmPassword is valid ', () => {
-    const accountData = mockAccountParams({
-      password: 'mM9@ppyy',
-      confirmPassword: 'mM9@ppyy',
+    const newParams = Object.assign({}, params, {
+      passwordConfirmation: undefined,
     })
 
-    const { account } = new Account(accountData).create()
-
-    expect(account).toEqual(accountData)
+    expect(account).toEqual(newParams)
   })
 })
