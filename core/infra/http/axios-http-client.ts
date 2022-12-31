@@ -1,9 +1,9 @@
-import axios, { AxiosResponse } from 'axios'
+import axios from 'axios'
 import {
   HttpRequest,
   HttpResponse,
   HttpClient,
-} from '@/application/protocols/http-client'
+} from '@/application/contracts/http-client'
 
 export class AxiosHttpClient implements HttpClient {
   async request({
@@ -12,18 +12,12 @@ export class AxiosHttpClient implements HttpClient {
     body,
     headers,
   }: HttpRequest): Promise<HttpResponse> {
-    let response: AxiosResponse
-
-    try {
-      response = await axios.request({
-        url,
-        method,
-        data: body,
-        headers,
-      })
-    } catch (error: any) {
-      response = error.response
-    }
+    const response = await axios.request({
+      url,
+      method,
+      data: body,
+      headers,
+    })
 
     return {
       statusCode: response.status,

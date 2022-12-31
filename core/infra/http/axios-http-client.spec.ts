@@ -17,7 +17,7 @@ const makeSut = (): SutTypes => {
 }
 
 describe('Infra - AxiosHttpClient', () => {
-  it('should call axios with correct values', async () => {
+  test('should call axios with correct values', async () => {
     const { sut, mockedAxios } = makeSut()
     const httpRequest = mockHttpRequest()
     await sut.request(httpRequest)
@@ -30,7 +30,7 @@ describe('Infra - AxiosHttpClient', () => {
     })
   })
 
-  it('should return correct response', async () => {
+  test('should return correct response', async () => {
     const { sut, mockedAxios } = makeSut()
     const httpRequest = mockHttpRequest()
     const httpResponse = await sut.request(httpRequest)
@@ -40,14 +40,5 @@ describe('Infra - AxiosHttpClient', () => {
       statusCode: axiosResponse.status,
       body: axiosResponse.data,
     })
-  })
-
-  it('should return correct error', async () => {
-    const { sut, mockedAxios } = makeSut()
-    mockedAxios.request.mockRejectedValueOnce({
-      response: { error: 'some error' },
-    })
-    const promise = sut.request(mockHttpRequest())
-    expect(promise).toEqual(mockedAxios.request.mock.results[0].value)
   })
 })
