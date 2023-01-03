@@ -3,17 +3,16 @@ import { UseCase } from '@/application/contracts/usecase'
 import { PerformCallback } from '@/application/contracts/perform-callback'
 import { HttpResponse } from '@/application/contracts/http-client'
 
-export type AuthenticationResponse = HttpResponse<CredentialsModel>
-export class AuthenticationUseCase implements UseCase {
-  #perform: PerformCallback<Promise<HttpResponse<CredentialsModel>>>
+export type AuthenticationResponse = Promise<HttpResponse<CredentialsModel>>
 
-  constructor(
-    perform: PerformCallback<Promise<HttpResponse<CredentialsModel>>>,
-  ) {
+export class AuthenticationUseCase implements UseCase {
+  #perform: PerformCallback<AuthenticationResponse>
+
+  constructor(perform: PerformCallback<AuthenticationResponse>) {
     this.#perform = perform
   }
 
-  async execute(params: CredentialsModel): Promise<AuthenticationResponse> {
+  async execute(params: CredentialsModel): AuthenticationResponse {
     return this.#perform(params)
   }
 }
