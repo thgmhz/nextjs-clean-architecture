@@ -5,13 +5,13 @@ import {
   HttpClient,
 } from '@/application/contracts/http-client'
 
-export class AxiosHttpClient implements HttpClient {
+export class AxiosHttpClient<T> implements HttpClient {
   async request({
     url,
     method,
     body,
     headers,
-  }: HttpRequest): Promise<HttpResponse> {
+  }: HttpRequest): Promise<HttpResponse<T>> {
     const response = await axios.request({
       url,
       method,

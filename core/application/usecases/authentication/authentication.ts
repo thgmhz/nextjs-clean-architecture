@@ -1,26 +1,19 @@
 import { CredentialsModel } from '@/domain/entities/credentials/credentials'
 import { UseCase } from '@/application/contracts/usecase'
-import { HttpClient } from '@/application/contracts/http-client'
-import { UserModel } from '@/domain/entities/user/user'
+import { PerformCallback } from '@/application/contracts/perform-callback'
+import { HttpResponse } from '@/application/contracts/http-client'
 
+export type AuthenticationResponse = HttpResponse<CredentialsModel>
 export class AuthenticationUseCase implements UseCase {
+  #perform: PerformCallback<Promise<HttpResponse<CredentialsModel>>>
+
   constructor(
-    private readonly url: string,
-    private readonly httpClient: HttpClient<UserModel>,
-  ) {}
+    perform: PerformCallback<Promise<HttpResponse<CredentialsModel>>>,
+  ) {
+    this.#perform = perform
+  }
 
-  async execute(params: CredentialsModel): Promise<UserModel> {
-    const { username, password } = params
-
-    const httpResponse = await this.httpClient.request({
-      url: this.url,
-      method: 'post',
-      body: {
-        username,
-        password,
-      },
-    })
-
-    return httpResponse.body
+  async execute(params: CredentialsModel): Promise<AuthenticationResponse> {
+    return this.#perform(params)
   }
 }

@@ -1,26 +1,28 @@
-import { Account, AccountModel } from '@/domain/entities/account/account'
-import { HttpClient, HttpResponse } from '@/application/contracts/http-client'
+import { PerformCallback } from '@/application/contracts/perform-callback'
 import { UseCase } from '@/application/contracts/usecase'
+import { HttpResponse } from '@/application/contracts/http-client'
+import {
+  Account,
+  AccountModel,
+  AccountParams,
+} from '@/domain/entities/account/account'
+
+export type AccountResponse = HttpResponse<AccountModel>
 
 export class CreateAccountUseCase implements UseCase {
-  constructor(
-    private readonly url: string,
-    private readonly httpClient: HttpClient<AccountModel>,
-  ) {}
+  #perform: PerformCallback<Promise<AccountResponse>>
 
-  async execute(params: AccountModel): Promise<HttpResponse> {
+  constructor(perform: PerformCallback<Promise<AccountResponse>>) {
+    this.#perform = perform
+  }
+
+  async execute(params: AccountParams): Promise<AccountResponse> {
     const account = new Account(params).create()
 
     if (account.isLeft()) {
       return Promise.reject(account.value)
     }
 
-    const httpResponse = await this.httpClient.request({
-      url: this.url,
-      method: 'post',
-      body: account.getValue(),
-    })
-
-    return httpResponse
+    return this.#perform(account.value)
   }
 }

@@ -1,25 +1,30 @@
+import { AccountModel, AccountParams } from '@/domain/entities/account/account'
 import { mockUserParams } from './mock-user'
-import { mockCredentialsParams, MockCredentialsProps } from './mock-credential'
-import { AccountModel } from '../entities/account/account'
+import { mockCredentialsParams } from './mock-credential'
+import { HttpResponse } from '@/application/contracts/http-client'
 
-type MockAccountParams = {
+type Props = {
   firstName?: string
   lastName?: string
   image?: string
+  gender?: string
+  username?: string
+  password?: string
+  passwordConfirmation?: string
 }
-
-type Props = MockAccountParams & MockCredentialsProps
 
 export const mockAccountParams = ({
   firstName,
   lastName,
   image,
+  gender,
   password,
   passwordConfirmation,
-}: Props): AccountModel => ({
+}: Props): AccountParams => ({
   ...mockUserParams({
     firstName,
     lastName,
+    gender,
     image,
   }),
   ...mockCredentialsParams({
@@ -28,7 +33,9 @@ export const mockAccountParams = ({
   }),
 })
 
-export const removePasswordConfirmation = (params: Props) =>
-  Object.assign(params, {
-    passwordConfirmation: undefined,
-  })
+export const mockAccountResponse = (): HttpResponse<AccountModel> => ({
+  statusCode: 200,
+  body: {
+    ...mockUserParams({}),
+  },
+})

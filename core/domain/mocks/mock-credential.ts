@@ -16,8 +16,3 @@ export const mockCredentialsParams = ({
   password: password ?? fakePassword,
   passwordConfirmation: passwordConfirmation ?? fakePassword,
 })
-
-export const removePasswordConfirmation = (params: MockCredentialsProps) =>
-  Object.assign(params, {
-    passwordConfirmation: undefined,
-  })
