@@ -1,5 +1,5 @@
-import { CreateAccountUseCase } from '@/application/usecases/create-account/create-account'
 import React, { useState } from 'react'
+import { CreateAccountUseCase } from '@/application/usecases/create-account/create-account'
 
 type Props = {
   createAccount: CreateAccountUseCase
@@ -12,7 +12,7 @@ export const SignUpPresentation: React.FC<Props> = ({ createAccount }) => {
   const makeRequest = async () => {
     await createAccount
       .execute({
-        firstName: 'asdasad',
+        firstName: 'aaaa',
         lastName: 'bbbb',
         gender: 'male',
         image: 'img.jpg',

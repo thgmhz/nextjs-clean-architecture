@@ -10,6 +10,7 @@ export const SignInPresentation: React.FC<Props> = ({ authentication }) => {
   const [error, setError] = useState<unknown>()
 
   const makeRequest = async () => {
+    console.log(authentication)
     await authentication
       .execute({
         username: 'kminchelle',
