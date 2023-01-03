@@ -1,7 +1,7 @@
 import { Entity } from '@/domain/contracts/entity'
 import { InvalidPasswordConfirmation } from '@/domain/errors/invalid-password-confirmation-error'
 import { InvalidPasswordError } from '@/domain/errors/invalid-password-error'
-import { Either, left, right } from '@/shared/either'
+import { Either, left, right } from '@/application/shared/either'
 
 export type CredentialsConfirmModel = {
   username: string

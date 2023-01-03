@@ -1,20 +1,18 @@
 import { Entity } from '@/domain/contracts/entity'
 import { UserModel, User } from '@/domain/entities/user/user'
-import { Either, left, right } from '@/shared/either'
+import { Either, left, right } from '@/application/shared/either'
 import {
   Credentials,
   CredentialsConfirmModel,
 } from '../credentials/credentials'
 
-export type AccountModel = UserModel & CredentialsConfirmModel
-export type AccountCreatedModel = Omit<AccountModel, 'passwordConfirmation'>
-
-type EitherProps = Either<Error, AccountCreatedModel>
+export type AccountParams = UserModel & CredentialsConfirmModel
+export type AccountModel = UserModel
 
 export class Account implements Entity {
-  constructor(private readonly params: AccountModel) {}
+  constructor(private readonly params: AccountParams) {}
 
-  public create(): EitherProps {
+  public create(): Either<Error, AccountModel> {
     const user = new User({
       firstName: this.params.firstName,
       lastName: this.params.lastName,

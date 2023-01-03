@@ -1,6 +1,6 @@
 import { InvalidNameError } from '@/domain/errors/invalid-name-error'
 import { InvalidImageError } from '@/domain/errors/invalid-image-error'
-import { left, right, Either } from '@/shared/either'
+import { left, right, Either } from '@/application/shared/either'
 import { Entity } from '@/domain/contracts/entity'
 
 export type UserModel = {
