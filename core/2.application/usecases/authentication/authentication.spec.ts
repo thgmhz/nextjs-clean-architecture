@@ -1,23 +1,24 @@
+import { mockHttpRequest, HttpClientSpy } from '@/application/mock/mock-http'
 import {
   mockAuthenticationParams,
   mockAuthenticationResponse,
 } from '@/domain/mocks/mock-authentication'
-import { mockHttpClientCurry } from '@/application/mock/mock-http'
 import { AuthenticationUseCase } from './authentication'
 
 const response = mockAuthenticationResponse()
 
-const makeSut = (url: string = 'http://fake-url.com') => {
-  const httpClientSpy = mockHttpClientCurry({ url, method: 'post', response })
-  const sut = new AuthenticationUseCase(httpClientSpy)
+const makeSut = () => {
+  const httpClientSpy = new HttpClientSpy(response)
+  const sut = new AuthenticationUseCase()
   return { httpClientSpy, sut }
 }
 
 describe('Domain - Usecase - Authentication', () => {
   test('should call HttpClient with correct values and make login', async () => {
-    const { sut } = makeSut()
+    const { sut, httpClientSpy } = makeSut()
     const params = mockAuthenticationParams()
-    const data = await sut.execute(params)
+    const auth = sut.execute(params)
+    const data = await httpClientSpy.request(mockHttpRequest(auth))
     expect(data).toEqual(response)
   })
 })

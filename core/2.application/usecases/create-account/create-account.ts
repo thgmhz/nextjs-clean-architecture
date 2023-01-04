@@ -1,4 +1,4 @@
-import { PerformCallback } from '@/application/contracts/perform-callback'
+import { Either, left, right } from '@/application/shared/either'
 import { UseCase } from '@/application/contracts/usecase'
 import { HttpResponse } from '@/application/contracts/http-client'
 import {
@@ -10,19 +10,13 @@ import {
 export type AccountResponse = HttpResponse<AccountModel>
 
 export class CreateAccountUseCase implements UseCase {
-  #perform: PerformCallback<Promise<AccountResponse>>
-
-  constructor(perform: PerformCallback<Promise<AccountResponse>>) {
-    this.#perform = perform
-  }
-
-  async execute(params: AccountParams): Promise<AccountResponse> {
+  execute(params: AccountParams): Either<Error, AccountModel> {
     const account = new Account(params).create()
 
     if (account.isLeft()) {
-      return Promise.reject(account.value)
+      return left(account.value)
     }
 
-    return this.#perform(account.value)
+    return right(account.value)
   }
 }

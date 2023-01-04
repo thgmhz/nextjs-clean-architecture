@@ -1,8 +1,8 @@
-import { AuthenticationUseCase } from '@/application/usecases/authentication/authentication'
+import { AuthenticationController } from '@/adapters/app/controllers/authentication/authentication-controller'
 import React, { useState } from 'react'
 
 type Props = {
-  authentication: AuthenticationUseCase
+  authentication: AuthenticationController
 }
 
 export const SignInPresentation: React.FC<Props> = ({ authentication }) => {
@@ -10,9 +10,8 @@ export const SignInPresentation: React.FC<Props> = ({ authentication }) => {
   const [error, setError] = useState<unknown>()
 
   const makeRequest = async () => {
-    console.log(authentication)
     await authentication
-      .execute({
+      .request({
         username: 'kminchelle',
         password: 'Aa@9mmmmm',
       })
@@ -25,10 +24,10 @@ export const SignInPresentation: React.FC<Props> = ({ authentication }) => {
       <button onClick={() => makeRequest()}>SignIn</button>
       <br />
       <br />
-      {JSON.stringify(response)}
+      Response: {JSON.stringify(response)}
       <br />
       <br />
-      {error && `${error}`}
+      Error: {JSON.stringify(error)}
     </>
   )
 }

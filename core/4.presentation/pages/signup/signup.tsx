@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { CreateAccountUseCase } from '@/application/usecases/create-account/create-account'
+import { CreateAccountController } from '@/adapters/app/controllers/create-account/create-account-controller'
 
 type Props = {
-  createAccount: CreateAccountUseCase
+  createAccount: CreateAccountController
 }
 
 export const SignUpPresentation: React.FC<Props> = ({ createAccount }) => {
@@ -11,8 +11,8 @@ export const SignUpPresentation: React.FC<Props> = ({ createAccount }) => {
 
   const makeRequest = async () => {
     await createAccount
-      .execute({
-        firstName: 'aaaa',
+      .request({
+        firstName: 'a',
         lastName: 'bbbb',
         gender: 'male',
         image: 'img.jpg',
@@ -29,10 +29,10 @@ export const SignUpPresentation: React.FC<Props> = ({ createAccount }) => {
       <button onClick={() => makeRequest()}>SignUp</button>
       <br />
       <br />
-      {JSON.stringify(response)}
+      Response: {JSON.stringify(response)}
       <br />
       <br />
-      {error && `${error}`}
+      Error: {error && `${error}`}
     </>
   )
 }

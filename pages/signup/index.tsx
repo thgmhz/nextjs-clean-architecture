@@ -3,7 +3,7 @@ import { CreateAccountController } from '@/adapters/app/controllers/create-accou
 import { SignUpPresentation } from '@/presentation/pages/signup/signup'
 
 const SignUp: React.FC = () => {
-  return <SignUpPresentation createAccount={CreateAccountController.create()} />
+  return <SignUpPresentation createAccount={new CreateAccountController()} />
 }
 
 export default SignUp

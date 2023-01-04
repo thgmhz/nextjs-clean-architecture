@@ -3,9 +3,7 @@ import { AuthenticationController } from '@/adapters/app/controllers/authenticat
 import { SignInPresentation } from '@/presentation/pages/signin/signin'
 
 const SignIn: React.FC = () => {
-  return (
-    <SignInPresentation authentication={AuthenticationController.create()} />
-  )
+  return <SignInPresentation authentication={new AuthenticationController()} />
 }
 
 export default SignIn

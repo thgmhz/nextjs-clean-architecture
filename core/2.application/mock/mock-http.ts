@@ -3,41 +3,18 @@ import {
   HttpRequest,
   HttpResponse,
   HttpStatusCode,
-  HttpMethod,
 } from '@/application/contracts/http-client'
 
-export const mockHttpRequest = (): HttpRequest => ({
+export const mockHttpRequest = (body: any): HttpRequest => ({
   url: 'http://www.mock.com/',
   method: 'post',
-  body: {
-    someBody: 'some body value',
-  },
+  body,
   headers: {
     someHeader: 'some header value',
   },
 })
 
-type Params = {
-  url: string
-  method: HttpMethod
-  headers?: any
-  response?: any
-}
-
-export const mockHttpClientCurry =
-  ({ url, method, response }: Params) =>
-  async (body: any): Promise<HttpResponse> => {
-    const data = await new HttpClientSpy(response)
-      .request({
-        url,
-        method,
-        body,
-      })
-      .then((res) => res)
-    return data
-  }
-
-export class HttpClientSpy<T = any> implements HttpClient<T> {
+export class HttpClientSpy<T = any> implements HttpClient {
   url?: string
   method?: string
   body?: any
