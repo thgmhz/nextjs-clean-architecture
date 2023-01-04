@@ -21,9 +21,11 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "core/*"
-      ]
+      "@/domain/*": ["./core/1.domain/*"],
+      "@/application/*": ["./core/2.application/*"],
+      "@/adapters/*": ["./core/3.adapters/*"],
+      "@/presentation/*": ["./core/4.presentation/*"],
+      "@/infra/*": ["./core/5.infra/*"]
     }
   },
   "include": [

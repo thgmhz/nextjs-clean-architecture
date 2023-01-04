@@ -3,7 +3,6 @@ import { CreateAccountController } from '@/adapters/app/controllers/create-accou
 import { SignUpPresentation } from '@/presentation/pages/signup/signup'
 
 const SignUp: React.FC = () => {
-  console.log(CreateAccountController.create())
   return <SignUpPresentation createAccount={CreateAccountController.create()} />
 }
 

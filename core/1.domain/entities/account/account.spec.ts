@@ -1,5 +1,5 @@
 import { mockAccountParams } from '@/domain/mocks/mock-account'
-import { Account, AccountCreatedModel } from './account'
+import { Account } from './account'
 
 describe('Entity - Account', () => {
   test('should not create account if User entity returns some error', () => {
@@ -25,7 +25,7 @@ describe('Entity - Account', () => {
   test('should create account and return the account data without password confirmation param', () => {
     const params = mockAccountParams({})
 
-    const account = new Account(params).create().value as AccountCreatedModel
+    const account = new Account(params).create().value
 
     const newParams = Object.assign({}, params, {
       passwordConfirmation: undefined,

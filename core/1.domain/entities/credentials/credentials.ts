@@ -18,6 +18,10 @@ type EitherProps = Either<InvalidPasswordError, CredentialsModel>
 
 export class Credentials implements Entity {
   public create(params: CredentialsConfirmModel): EitherProps {
+    if (!Credentials.validateUsername(params.username)) {
+      return left(new Error()) // to do: create custom error
+    }
+
     if (!Credentials.validatePassword(params.password)) {
       return left(new InvalidPasswordError())
     }
@@ -37,7 +41,15 @@ export class Credentials implements Entity {
     })
   }
 
-  private static validatePassword(password: string): boolean {
+  public static validateUsername(username: string): boolean {
+    if (!username || typeof username !== 'string' || username.length < 5) {
+      return false
+    }
+
+    return true
+  }
+
+  public static validatePassword(password: string): boolean {
     const regex =
       /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,10}$/
     const isValidPassword = regex.test(password)
@@ -49,7 +61,7 @@ export class Credentials implements Entity {
     return true
   }
 
-  private static validatePasswordConfirmation(
+  public static validatePasswordConfirmation(
     password: string,
     passwordConfirmation: string,
   ): boolean {

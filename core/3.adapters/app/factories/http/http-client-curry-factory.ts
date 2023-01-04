@@ -1,5 +1,5 @@
 import { HttpMethod, HttpResponse } from '@/application/contracts/http-client'
-import { AxiosHttpClient } from '@/infra/http/axios-http-client'
+import { AxiosHttpClient } from '@/5.infra/http/axios-http-client'
 
 type Params = {
   url: string

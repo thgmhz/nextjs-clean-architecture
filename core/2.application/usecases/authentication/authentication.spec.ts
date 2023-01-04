@@ -1,7 +1,9 @@
-import { mockAuthenticationParams } from './../../../domain/mocks/mock-authentication'
+import {
+  mockAuthenticationParams,
+  mockAuthenticationResponse,
+} from '@/domain/mocks/mock-authentication'
 import { mockHttpClientCurry } from '@/application/mock/mock-http'
 import { AuthenticationUseCase } from './authentication'
-import { mockAuthenticationResponse } from '@/domain/mocks/mock-authentication'
 
 const response = mockAuthenticationResponse()
 
